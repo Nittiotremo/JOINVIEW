@@ -5,7 +5,7 @@ create table venda(
 	valor_unit numeric(10,2) not null,
 	quantidade numeric(10) not null,
 	desconto integer
-);
+);*/
 
 insert into venda(id_nf, id_item, cod_prod, valor_unit, quantidade, desconto)
 values           (1, 1, 1, 25.00, 10, 5);
@@ -109,12 +109,16 @@ SELECT * FROM EXA2()
 
 --c) Altere o valor do desconto (para zero) de todos os registros onde este campo é nulo.
 
-
+CREATE OR REPLACE FUNCTION EXC() RETURNS VARCHAR AS 
+$$
 UPDATE VENDA
 SET DESCONTO = 0
 WHERE DESCONTO IS NULL;
-SELECT * FROM VENDA;
+SELECT 'DADOS ATUALIZADOS' ;
+$$LANGUAGE SQL;
 
+SELECT exc();
+SELECT * FROM VENDA;
 
 /*d) Pesquise os itens que foram vendidos. As colunas presentes no resultado da consulta
 são: ID_NF, ID_ITEM, COD_PROD, VALOR_UNIT, VALOR_TOTAL, DESCONTO,
@@ -122,6 +126,18 @@ VALOR_VENDIDO. OBS: O VALOR_TOTAL é obtido pela fórmula: QUANTIDADE *
 VALOR_UNIT. O VALOR_VENDIDO é igual a VALOR_UNIT -
 (VALOR_UNIT*(DESCONTO/100)).*/
 
+CREATE FUNCTION EXD() RETURNS SETOF VENDA AS 
+$$
+DECLARE
+	
+	BEGIN
+	  RETURN QUERY SELECT (QUANTIDADE * VALOR_UNIT) FROM VENDA;
+		
+	END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION EXD();
+SELECT * FROM EXD();
 
 
 /*e) Pesquise o valor total das NF e ordene o resultado do maior valor para o menor. As
@@ -159,4 +175,3 @@ resultado da consulta por COD_PROD.*/
 da consulta são: ID_NF, QTD_ITENS. OBS:: NÃO ESTÁ RELACIONADO A QUANTIDADE
 VENDIDA DO ITEM E SIM A QUANTIDADE DE ITENS POR NOTA FISCAL. Agrupe o
 resultado da consulta por ID_NF*/
-
