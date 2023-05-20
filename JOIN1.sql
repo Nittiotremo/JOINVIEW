@@ -5,7 +5,7 @@ create table venda(
 	valor_unit numeric(10,2) not null,
 	quantidade numeric(10) not null,
 	desconto integer
-);*/
+);
 
 insert into venda(id_nf, id_item, cod_prod, valor_unit, quantidade, desconto)
 values           (1, 1, 1, 25.00, 10, 5);
@@ -150,10 +150,24 @@ colunas presentes no resultado da consulta são: ID_NF, VALOR_VENDIDO. OBS: O
 VALOR_TOTAL é obtido pela fórmula: ∑ QUANTIDADE * VALOR_UNIT. O
 VALOR_VENDIDO é igual a ∑ VALOR_UNIT - (VALOR_UNIT*(DESCONTO/100)). Agrupe o
 resultado da consulta por ID_NF.*/
+CREATE OR REPLACE FUNCTION EXAF() RETURNS SETOF VENDA AS 
+$$
+BEGIN 
+	 SELECT * FROM VENDA WHERE VALOR_UNIT * (DESCONTO/100);
+END;
+$$LANGUAGE plpgsql;
+SELECT * FROM EXAF();
+SELECT * FROM VENDA
 
 /*g) Consulte o produto que mais vendeu no geral. As colunas presentes no resultado da
 consulta são: COD_PROD, QUANTIDADE. Agrupe o resultado da consulta por
 COD_PROD.*/
+CREATE OR REPLACE VIEW EXG AS
+SELECT COD_PROD,QUANTIDADE FROM
+VENDA
+ORDER BY QUANTIDADE ASC;
+
+SELECT * FROM EXG;
 
 /*h) Consulte as NF que foram vendidas mais de 10 unidades de pelo menos um produto. As
 colunas presentes no resultado da consulta são: ID_NF, COD_PROD, QUANTIDADE.
